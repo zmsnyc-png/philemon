@@ -23,14 +23,11 @@
       overflow: hidden;
     }
 
-    /* The whole page sits inside this layer so filter: invert() flips everything at once */
     .page {
       position: relative;
       width: 100%;
       height: 100vh;
-      height: 100dvh; /* dynamic viewport — respects mobile browser chrome */
-      /* inversion applied via JS */
-      will-change: filter;
+      height: 100dvh;
     }
 
     /* ── Text ──────────────────────────────────────────────────────────── */
@@ -53,18 +50,23 @@
       z-index: 10;
     }
 
-    /* ── Ovals ─────────────────────────────────────────────────────────── */
-    .oval {
+    /* ── GIF ───────────────────────────────────────────────────────────── */
+    .gif-wrapper {
       position: absolute;
-      border-radius: 50%;
-      border: 1px solid rgba(255, 255, 255, 0.72);
-      pointer-events: none;
-      z-index: 1;
+      top: 50%;
+      left: 50%;
       transform: translate(-50%, -50%);
+      z-index: 5;
+    }
 
-      /* Desktop: tall slim vertical ovals */
-      width: clamp(80px, 10vw, 155px);
-      height: clamp(520px, 92vh, 900px);
+    .gif-wrapper img {
+      display: block;
+      /* 400×300 native — cap at 38vw wide on desktop, never exceed viewport */
+      width: clamp(200px, 38vw, 480px);
+      height: auto;
+      max-width: 90vw;
+      max-height: 60vh;
+      object-fit: contain;
     }
 
     /* ── Mobile portrait ───────────────────────────────────────────────── */
@@ -79,116 +81,35 @@
         bottom: max(3rem, env(safe-area-inset-bottom, 0px) + 1.5rem);
         left: 1.4rem;
       }
-      /* Wide flat horizontal ovals — JS drives `top` */
-      .oval {
-        width: clamp(260px, 80vw, 420px);
-        height: clamp(55px, 11vw, 100px);
+      .gif-wrapper img {
+        /* On portrait mobile, go wider and limit height so text/branding breathe */
+        width: 82vw;
+        max-height: 45vh;
       }
     }
 
     /* ── Landscape mobile / small tablets ─────────────────────────────── */
     @media (max-width: 900px) and (orientation: landscape) {
-      .oval {
-        width: clamp(60px, 8vw, 120px);
-        height: clamp(260px, 84vh, 600px);
+      .gif-wrapper img {
+        width: clamp(180px, 46vw, 400px);
+        max-height: 55vh;
       }
     }
   </style>
 </head>
 <body>
-  <div class="page" id="page">
+  <div class="page">
     <div class="top-text">
       In the depths, I found a chamber that did not belong to the world.<br />
       It was quiet, yet filled with a presence that watched without eyes.<br />
       I entered, not as a guest, but as something that had always been expected.
     </div>
 
-    <div id="oval-left"  class="oval"></div>
-    <div id="oval-right" class="oval"></div>
+    <div class="gif-wrapper">
+      <img src="dcdadfdb-a28d-41c0-88b9-0336983472ab.gif" alt="" />
+    </div>
 
     <div class="branding">philemon</div>
   </div>
-
-  <script>
-    // ── Oval animation + inversion ─────────────────────────────────────────
-    const page      = document.getElementById('page');
-    const ovalLeft  = document.getElementById('oval-left');
-    const ovalRight = document.getElementById('oval-right');
-
-    const CYCLE_MS = 7200;
-
-    function isPortraitMobile() {
-      return window.innerWidth <= 600 && window.innerHeight > window.innerWidth;
-    }
-
-    // Smoothstep for a softer inversion ramp (no harsh edge)
-    function smoothstep(edge0, edge1, x) {
-      const t = Math.max(0, Math.min(1, (x - edge0) / (edge1 - edge0)));
-      return t * t * (3 - 2 * t);
-    }
-
-    // Current inversion value, lerped each frame so the flip feels organic
-    let invertNow = 0;
-
-    function tick(ts) {
-      const t        = (ts % CYCLE_MS) / CYCLE_MS;
-      const progress = (1 - Math.cos(2 * Math.PI * t)) / 2; // 0 → 1 → 0
-
-      // ── Position ovals ─────────────────────────────────────────────────
-      let leftPct, rightPct, axis; // axis: 'x' or 'y'
-
-      if (isPortraitMobile()) {
-        // Vertical crossing
-        const topA = 15 + progress * 70;
-        const topB = 85 - progress * 70;
-        ovalLeft.style.left  = '50%';
-        ovalLeft.style.top   = topA + '%';
-        ovalRight.style.left = '50%';
-        ovalRight.style.top  = topB + '%';
-        leftPct  = topA;
-        rightPct = topB;
-        axis = 'y';
-      } else {
-        // Horizontal crossing
-        leftPct  = 14 + progress * 72;
-        rightPct = 86 - progress * 72;
-        ovalLeft.style.top   = '50%';
-        ovalLeft.style.left  = leftPct + '%';
-        ovalRight.style.top  = '50%';
-        ovalRight.style.left = rightPct + '%';
-        axis = 'x';
-      }
-
-      // ── Collision detection ────────────────────────────────────────────
-      // Measure actual pixel positions of the oval centers
-      const rectL = ovalLeft.getBoundingClientRect();
-      const rectR = ovalRight.getBoundingClientRect();
-
-      const cLx = rectL.left + rectL.width  / 2;
-      const cLy = rectL.top  + rectL.height / 2;
-      const cRx = rectR.left + rectR.width  / 2;
-      const cRy = rectR.top  + rectR.height / 2;
-
-      // Distance between centers on the axis of movement
-      const dist     = axis === 'x' ? Math.abs(cLx - cRx) : Math.abs(cLy - cRy);
-      const ovalSpan = axis === 'x' ? rectL.width           : rectL.height;
-
-      // overlap: 0 (just touching) → 1 (centers coincide)
-      // Start fading in when distance < 1× span, peak at distance = 0
-      const rawOverlap = smoothstep(ovalSpan, 0, dist);
-
-      // Lerp the live inversion value for an organic ease-in/out feel
-      const lerpSpeed  = rawOverlap > invertNow ? 0.06 : 0.04;
-      invertNow += (rawOverlap - invertNow) * lerpSpeed;
-
-      // Apply: invert the entire page element
-      // At invertNow = 1 the page is fully white/inverted
-      page.style.filter = `invert(${invertNow.toFixed(4)})`;
-
-      requestAnimationFrame(tick);
-    }
-
-    requestAnimationFrame(tick);
-  </script>
 </body>
 </html>
