@@ -52,25 +52,6 @@
       z-index: 10;
     }
 
-    /* ── Video ─────────────────────────────────────────────────────────── */
-    .video-wrapper {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: clamp(160px, 20vw, 260px);
-      aspect-ratio: 1 / 1;
-      overflow: hidden;
-      z-index: 10;
-    }
-
-    .video-wrapper video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-
     /* ── Ovals ─────────────────────────────────────────────────────────── */
     .oval {
       position: absolute;
@@ -88,27 +69,14 @@
     /* ── Mobile portrait ───────────────────────────────────────────────── */
     @media (max-width: 600px) and (orientation: portrait) {
       .top-text {
-<<<<<<< HEAD
         font-size: 12px;
         top: 3.5rem;
         left: 1.4rem;
       }
       .branding {
         font-size: 12px;
-        bottom: 3.5rem;
-=======
-        font-size: 10px;
-        top: 2rem;
-        left: 1.4rem;
-      }
-      .branding {
-        font-size: 10px;
         bottom: 2rem;
->>>>>>> 8d277a4b3289aec03f3a503bceaf0b1de460611b
         left: 1.4rem;
-      }
-      .video-wrapper {
-        width: clamp(120px, 48vw, 200px);
       }
       /* Wide flat horizontal ovals — JS drives `top` */
       .oval {
@@ -137,26 +105,10 @@
     <div id="oval-left"  class="oval"></div>
     <div id="oval-right" class="oval"></div>
 
-    <div class="video-wrapper">
-      <video id="main-video" src="video.mp4" autoplay muted loop playsinline></video>
-    </div>
-
     <div class="branding">philemon</div>
   </div>
 
   <script>
-    // ── Video ──────────────────────────────────────────────────────────────
-    const video = document.getElementById('main-video');
-
-    function tryUnmute() {
-      video.muted = false;
-      ['click','keydown','touchstart'].forEach(e =>
-        document.removeEventListener(e, tryUnmute));
-    }
-    video.play().catch(() => { video.muted = true; video.play(); });
-    ['click','keydown','touchstart'].forEach(e =>
-      document.addEventListener(e, tryUnmute));
-
     // ── Oval animation + inversion ─────────────────────────────────────────
     const page      = document.getElementById('page');
     const ovalLeft  = document.getElementById('oval-left');
