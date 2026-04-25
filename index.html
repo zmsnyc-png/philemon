@@ -5,118 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>philemon</title>
   <style>
-    *, *::before, *::after {
+    html, body {
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
-    }
-
-    html, body {
       width: 100%;
       height: 100%;
       background: #000;
-      color: #fff;
-      font-family: Arial, Helvetica, sans-serif;
-      font-size: 13px;
-      font-weight: 400;
-      line-height: 1.4;
       overflow: hidden;
-    }
-
-    .page {
-      position: relative;
-      width: 100%;
-      height: 100vh;
-      height: 100dvh;
-    }
-
-    /* ── Text ──────────────────────────────────────────────────────────── */
-    .top-text {
-      position: absolute;
-      top: 2.8rem;
-      left: 2rem;
-      line-height: 1.25;
-      font-size: clamp(10px, 0.9vw, 13px);
-      letter-spacing: 0.01em;
-      z-index: 10;
-    }
-
-    .branding {
-      position: absolute;
-      bottom: 2.8rem;
-      left: 2rem;
-      font-size: clamp(10px, 0.9vw, 13px);
-      letter-spacing: 0.01em;
-      z-index: 10;
-    }
-
-    /* ── GIF ───────────────────────────────────────────────────────────── */
-    .gif-wrapper {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 5;
-    }
-
-    .gif-wrapper img {
-      display: block;
-      /* 400×300 native — cap at 38vw wide on desktop, never exceed viewport */
-      width: clamp(100px, 19vw, 240px);
-      height: auto;
-      max-width: 90vw;
-      max-height: 60vh;
-      object-fit: contain;
-    }
-
-    /* ── Mobile portrait ───────────────────────────────────────────────── */
-    @media (max-width: 600px) and (orientation: portrait) {
-      .top-text {
-        font-size: 12px;
-        top: 3.5rem;
-        left: 1.4rem;
-      }
-      .branding {
-        font-size: 12px;
-        bottom: max(3rem, env(safe-area-inset-bottom, 0px) + 1.5rem);
-        left: 1.4rem;
-      }
-      /* Align GIF edges with the text, anchor above "philemon" */
-      .gif-wrapper {
-        top: auto;
-        bottom: max(5.5rem, env(safe-area-inset-bottom, 0px) + 4rem);
-        left: 1.4rem;
-        transform: none;
-        width: calc(100% - 2.8rem);
-      }
-      .gif-wrapper img {
-        width: 100%;
-        max-height: 38vh;
-      }
-    }
-
-    /* ── Landscape mobile / small tablets ─────────────────────────────── */
-    @media (max-width: 900px) and (orientation: landscape) {
-      .gif-wrapper img {
-        width: clamp(180px, 46vw, 400px);
-        max-height: 55vh;
-      }
     }
   </style>
 </head>
 <body>
-  <div class="page">
-    <div class="top-text">
-      In the depths, I found a chamber that did not belong to the world.<br />
-      It was quiet, yet filled with a presence that watched without eyes.<br />
-      I entered, not as a guest, but as something that had always been expected.
-    </div>
-
-    <div class="gif-wrapper">
-      <img src="dcdadfdb-a28d-41c0-88b9-0336983472ab.gif" alt="" />
-    </div>
-
-    <div class="branding">philemon</div>
-  </div>
 </body>
 </html>
